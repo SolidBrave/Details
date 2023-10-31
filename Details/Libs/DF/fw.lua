@@ -117,9 +117,28 @@ local embed_functions = {
 	"CreateBorder",
 	"FormatNumber",
 	"IntegerToTimer",
+	"Dispatch",
 }
 
 DF.table = {}
+
+local dispatch_error = function (context, errortext)
+	DF:Msg ( (context or "<no context>") .. " |cFFFF9900error|r: " .. (errortext or "<no error given>"))
+end
+
+function DF:Dispatch (func, ...)
+	if (type (func) ~= "function") then
+		return dispatch_error (_, "Dispatch required a function.")
+	end
+
+	local okay, result1, result2, result3, result4 = xpcall (func, geterrorhandler(), ...)
+	
+	if (not okay) then
+		return nil
+	end
+	
+	return result1, result2, result3, result4
+end
 
 function DF:GetFrameworkFolder()
 	return DF.folder

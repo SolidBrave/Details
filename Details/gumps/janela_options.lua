@@ -4916,7 +4916,6 @@ end
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- General Settings - Profiles ~13
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	
 function window:CreateFrame13()
 	
 	local frame13 = window.options [13][1]
@@ -5178,11 +5177,11 @@ function window:CreateFrame13()
 		window:CreateLineBackground2 (frame13, select_profileErase_dropdown, select_profileErase_label, Loc ["STRING_OPTIONS_PROFILES_ERASE_DESC"])
 		
 	--> reset profile
-	
+		
 		function _detalhes:RefreshOptionsAfterProfileReset()
 			_detalhes:OpenOptionsWindow (_detalhes:GetInstance(1))
 		end
-	
+		
 		local reset_profile = function()
 			local current_instance = _G.DetailsOptionsWindow.instance
 			_detalhes:ResetProfile (_detalhes:GetCurrentProfileName())
@@ -5190,7 +5189,6 @@ function window:CreateFrame13()
 		end
 		
 		local profile_reset_button = g:NewButton (frame13, _, "$parentProfileResetButton", "profileResetButton", window.buttons_width, 18, reset_profile, nil, nil, nil, Loc ["STRING_OPTIONS_PROFILES_RESET"], nil, options_button_template)
-		--profile_reset_button:InstallCustomTexture (nil, nil, nil, nil, nil, true)
 		frame13.profileResetButton:SetIcon ([[Interface\Buttons\UI-RefreshButton]], 14, 14, nil, {0, 1, 0, 0.9375}, nil, 4, 2)
 		frame13.profileResetButton:SetTextColor (button_color_rgb)
 		
@@ -5198,6 +5196,58 @@ function window:CreateFrame13()
 		hiddenlabel:SetPoint ("left", profile_reset_button, "left")
 		
 		window:CreateLineBackground2 (frame13, "profileResetButton", "profileResetButton", Loc ["STRING_OPTIONS_PROFILES_RESET_DESC"], nil, {1, 0.8, 0}, button_color_rgb)
+		
+	--> import export functions
+		local export_profile = function()
+			local str = Details:ExportCurrentProfile()
+			if (str) then
+				_detalhes:ShowImportWindow (str, nil, "Details! Export Profile")
+				
+				--[=[ debug
+				local uncompress = Details:DecompressData (str, "print")
+				if (uncompress) then
+					Details:Dump (uncompress)
+				else
+					print ("failed...")
+				end
+				--]=]
+			end
+		end
+		
+		local import_profile = function()
+			--when clicking in the okay button in the import window, it send the text in the first argument
+			_detalhes:ShowImportWindow ("", function (profileString)
+				print(profileString)
+				if (type (profileString) ~= "string" or string.len (profileString) < 2) then
+					return
+				end
+				
+				--prompt text panel returns what the user inserted in the text field in the first argument
+				DetailsFramework:ShowTextPromptPanel ("Insert a Name for the New Profile:", function (newProfileName)
+					Details:ImportProfile (profileString, newProfileName)
+				end)
+			end, "Details! Import Profile (paste string)")
+		end	
+		
+	--> import profile
+		local profileImportButton = g:NewButton (frame13, _, "$parentProfileImportButton", "profileImportButton", window.buttons_width, 18, import_profile, nil, nil, nil, "Import Profile", nil, options_button_template) --> localize-me
+		frame13.profileImportButton:SetIcon ([[Interface\BUTTONS\UI-GuildButton-OfficerNote-Up]], 14, 14, nil, {0, 1, 0, 1}, nil, 4, 2)
+		frame13.profileImportButton:SetTextColor (button_color_rgb)
+		
+		local hiddenlabel = g:NewLabel (frame13, _, "$parentProfileImportButtonLabel", "profileImportButtonLabel", "", "GameFontHighlightLeft")
+		hiddenlabel:SetPoint ("left", profileImportButton, "left")
+		
+		window:CreateLineBackground2 (frame13, "profileImportButton", "profileImportButton", "Import current profile", nil, {1, 0.8, 0}, button_color_rgb)
+		
+	-->  export profile
+		local profileExportButton = g:NewButton (frame13, _, "$parentProfileExportButton", "profileExportButton", window.buttons_width, 18, export_profile, nil, nil, nil, "Export Current Profile", nil, options_button_template) --> localize-me
+		frame13.profileExportButton:SetIcon ([[Interface\Buttons\UI-GuildButton-MOTD-Up]], 14, 14, nil, {1, 0, 0, 1}, nil, 4, 2)
+		frame13.profileExportButton:SetTextColor (button_color_rgb)
+		
+		local hiddenlabel = g:NewLabel (frame13, _, "$parentProfileExportButtonLabel", "profileExportButtonLabel", "", "GameFontHighlightLeft")
+		hiddenlabel:SetPoint ("left", profileExportButton, "left")
+		
+		window:CreateLineBackground2 (frame13, "profileExportButton", "profileExportButton", "Export current profile", nil, {1, 0.8, 0}, button_color_rgb)
 		
 	--> save window position within profile
 	
@@ -5235,13 +5285,14 @@ function window:CreateFrame13()
 			{select_profileCopy_label, 7},
 			{select_profileErase_label, 8},
 			{profile_reset_button, 9, true},
+			{profileExportButton},
+			{profileImportButton},
 			
 		}
 		
 		window:arrange_menu (frame13, left_side, x, window.top_start_at)	
 		
 end
-
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Appearance - Skin ~3
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

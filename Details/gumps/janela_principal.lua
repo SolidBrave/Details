@@ -2191,16 +2191,24 @@ local icon_frame_on_enter = function (self)
 			local got_info
 			if (ilvl) then
 				GameCooltip:AddLine (STAT_AVERAGE_ITEM_LEVEL .. ":", ilvl and floor (ilvl.ilvl) or "??") --> Loc from GlobalStrings.lua
+				GameCooltip:AddIcon ([[]], 1, 1, 1, 20)
+				_detalhes:AddTooltipBackgroundStatusbar()
+				got_info = true
+			else
+				GameCooltip:AddLine (STAT_AVERAGE_ITEM_LEVEL .. ":" , 0)
+				GameCooltip:AddIcon ([[]], 1, 1, 1, 20)
 				_detalhes:AddTooltipBackgroundStatusbar()
 				got_info = true
 			end
 			
 			if (talent_string ~= "") then
 				GameCooltip:AddLine (TALENTS .. ":", talent_string) --> Loc from GlobalStrings.lua
+				GameCooltip:AddIcon ([[]], 1, 1, 1, 24)
 				_detalhes:AddTooltipBackgroundStatusbar()
 				got_info = true
 			elseif (got_info) then
 				GameCooltip:AddLine (TALENTS .. ":", Loc ["STRING_QUERY_INSPECT_REFRESH"]) --> Loc from GlobalStrings.lua
+				GameCooltip:AddIcon ([[]], 1, 1, 1, 24)
 				_detalhes:AddTooltipBackgroundStatusbar()
 			end
 			
@@ -2208,7 +2216,7 @@ local icon_frame_on_enter = function (self)
 			GameCooltip:SetOption ("MinButtonHeight", 15)
 			GameCooltip:SetOption ("IgnoreButtonAutoHeight", false)
 			
-			local height = 52
+			local height = 54
 			if (not got_info) then
 				GameCooltip:AddLine (Loc ["STRING_QUERY_INSPECT"], nil, 1, "orange")
 				GameCooltip:AddIcon ([[Interface\TUTORIALFRAME\UI-TUTORIAL-FRAME]], 1, 1, 12, icon_size, 8/512, 70/512, 224/512, 306/512)

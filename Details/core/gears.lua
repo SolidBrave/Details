@@ -966,6 +966,8 @@ local encounter_is_current_tier = function (encounterID)
 			if (not _detalhes.InstancesToStoreData [mapID]) then
 				return false
 			end
+		else
+			return false
 		end
 	end
 	return true
@@ -1009,6 +1011,11 @@ end
 --remote call RoS
 function _detalhes.storage:GetIDsToGuildSync()
 	local db = _detalhes.storage:OpenRaidStorage()
+	
+	if (not db) then
+		return
+	end
+	
 	local IDs = {}
 	
 	--build the encounter ID list
@@ -1037,6 +1044,10 @@ end
 --local call RoC - received the encounter IDS - need to know which fights is missing
 function _detalhes.storage:CheckMissingIDsToGuildSync (IDsList)
 	local db = _detalhes.storage:OpenRaidStorage()
+	
+	if (not db) then
+		return
+	end
 	
 	if (type (IDsList) ~= "table") then
 		if (_detalhes.debug) then
@@ -1071,6 +1082,10 @@ end
 --remote call RoS - build the encounter list from the IDsList
 function _detalhes.storage:BuildEncounterDataToGuildSync (IDsList)
 	local db = _detalhes.storage:OpenRaidStorage()
+	
+	if (not db) then
+		return
+	end
 	
 	if (type (IDsList) ~= "table") then
 		if (_detalhes.debug) then
@@ -1132,6 +1147,10 @@ end
 function _detalhes.storage:AddGuildSyncData (data, source)
 	local db = _detalhes.storage:OpenRaidStorage()
 	
+	if (not db) then
+		return
+	end
+	
 	local AddedAmount = 0
 	_detalhes.LastGuildSyncReceived = GetTime()
 	
@@ -1189,6 +1208,9 @@ end
 
 function _detalhes.storage:ListDiffs()
 	local db = _detalhes.storage:OpenRaidStorage()
+	if (not db) then
+		return
+	end
 	local t = {}
 	for diff, _ in pairs (db) do
 		tinsert (t, diff)
@@ -1198,7 +1220,9 @@ end
 
 function _detalhes.storage:ListEncounters (diff)
 	local db = _detalhes.storage:OpenRaidStorage()
-	
+	if (not db) then
+		return
+	end
 	local t = {}
 	if (diff) then
 		local table = db [diff]
@@ -1220,7 +1244,9 @@ end
 
 function _detalhes.storage:GetPlayerData (diff, encounter_id, playername)
 	local db = _detalhes.storage:OpenRaidStorage()
-
+	if (not db) then
+		return
+	end
 	local t = {}
 	assert (type (playername) == "string", "PlayerName must be a string.")
 
@@ -1283,7 +1309,9 @@ end
 
 function _detalhes.storage:GetEncounterData (diff, encounter_id, guild)
 	local db = _detalhes.storage:OpenRaidStorage()
-
+	if (not db) then
+		return
+	end
 	if (not diff) then
 		return db
 	end
@@ -1319,7 +1347,9 @@ end
 local create_storage_tables = function()
 	--> get the storage table
 	local db = DetailsDataStorage
-	
+	if (not db) then
+		return
+	end
 	if (not db and _detalhes.CreateStorageDB) then
 		db = _detalhes:CreateStorageDB()
 		if (not db) then
